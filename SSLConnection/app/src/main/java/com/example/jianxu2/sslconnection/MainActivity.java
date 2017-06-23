@@ -3,13 +3,12 @@ package com.example.jianxu2.sslconnection;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.ButtonBarLayout;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,11 +20,7 @@ import org.java_websocket.WebSocketImpl;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyStore;
@@ -107,11 +102,10 @@ public class MainActivity extends AppCompatActivity {
                 //sendMessage();
                 //mWebSocketClient.send("Hello from " + Build.MANUFACTURER + " " + Build.MODEL);
                 //ws.sendText(msg);
-                mWebSocketClient.send(msg);
+                sendMessage(mWebSocketClient);
             }
         });
     }
-
 
     private void connectWebSocket() {
         URI uri;
@@ -127,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
                 Log.i("Websocket", "Opened");
-
             }
 
             @Override
@@ -162,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
         WebSocketImpl.DEBUG = true;
 
         try {
-            WebSocketChatClient chatclient = new WebSocketChatClient(new URI("wss://localhost:8887"));
+            mWebSocketClient = new WebSocketChatClient(new URI("wss://localhost:8887"));
 
             // load up the key store
             String KEYSTORE = "keystore.bks";
@@ -187,31 +180,19 @@ public class MainActivity extends AppCompatActivity {
             sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
 
-            chatclient.setSocket(sslContext.getSocketFactory().createSocket());
-            chatclient.connectBlocking();
+            mWebSocketClient.setSocket(sslContext.getSocketFactory().createSocket());
+            mWebSocketClient.connectBlocking();
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            while (true) {
-//                String line = reader.readLine();
-//                if (line.equals("close")) {
-//                    chatclient.close();
-//                } else {
-//                    chatclient.send(line);
-//                }
-                Thread.sleep(1000);
-                chatclient.send("Hello world");
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
-    public void sendMessage() {
+    public void sendMessage(WebSocketClient client) {
         EditText editText = (EditText) findViewById(R.id.msg_txt);
         Log.i(TAG, "Sending message " + editText.getText().toString());
-        mWebSocketClient.send(editText.getText().toString());
-
+        client.send(editText.getText().toString());
         editText.setText("");
     }
 

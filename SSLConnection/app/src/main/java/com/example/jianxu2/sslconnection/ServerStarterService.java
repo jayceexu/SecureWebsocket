@@ -126,12 +126,12 @@ public class ServerStarterService extends Service {
                 chatserver.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
 
                 chatserver.start();
-                while (true) {
-                    //String in = sysin.readLine();
-                    //s.sendToAll(in);
-                    Thread.sleep(1000);
-                    //chatserver.sendToAll("Hello, I'm the server");
-                }
+//                while (true) {
+//                    //String in = sysin.readLine();
+//                    //s.sendToAll(in);
+//                    Thread.sleep(1000);
+//                    //chatserver.sendToAll("Hello, I'm the server");
+//                }
 
             } catch(Exception e) {
                 e.printStackTrace();

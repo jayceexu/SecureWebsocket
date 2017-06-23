@@ -37,9 +37,6 @@ import javax.net.ssl.TrustManagerFactory;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class MainActivity extends AppCompatActivity {
-//    static {
-//        Security.insertProviderAt(new BouncyCastleProvider(), 1);
-//    }
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
@@ -113,37 +110,6 @@ public class MainActivity extends AppCompatActivity {
                 mWebSocketClient.send(msg);
             }
         });
-
-        try {
-//        URL url = new URL("http://www.google.com");
-//        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-//
-//        URL urls = new URL("https://www.google.com");
-//        HttpsURLConnection httpsURLConnection = (HttpsURLConnection) urls.openConnection();
-//
-//        InputStream in = httpsURLConnection.getInputStream();
-
-//            mSslContext = SSLContext.getInstance("TLS");
-//          final WebSocket ws = connect();
-
-//            WebSocketFactory factory = new WebSocketFactory();
-
-//            factory.setSSLContext(mSslContext);
-//            ProxySettings settings = factory.getProxySettings();
-//            settings.setServer("https://proxy.example.com");
-//            settings.setCredentials("ABC", "123");
-//            final WebSocket ws = new WebSocketFactory().createSocket("ws://localhost/endpoint", TIMEOUT);
-//
-//            ws.addListener(new WebSocketAdapter() {
-//                @Override
-//                public void onTextMessage(WebSocket websocket, String text) throws Exception {
-//                    Log.d("MainActivity", "Receiving a message");
-//                    super.onTextMessage(websocket, text);
-//                }
-//            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -198,27 +164,46 @@ public class MainActivity extends AppCompatActivity {
         try {
             WebSocketChatClient chatclient = new WebSocketChatClient(new URI("wss://localhost:8887"));
 
-            // load up the key store
-            String STORETYPE = "BKS";
-            String KEYSTORE = "keystore.bks";
-            String STOREPASSWORD = "123456";
-            String KEYPASSWORD = "123456";
-            // Get the dir of SD Card
-            File sdCardDir = Environment.getExternalStorageDirectory();
-            Log.i(TAG, "Sdcard dir: " + sdCardDir.getAbsolutePath());
+//            // load up the key store
+//            String STORETYPE = "BKS";
+//            String KEYSTORE = "keystore.bks";
+//            String STOREPASSWORD = "123456";
+//            String KEYPASSWORD = "123456";
+//            // Get the dir of SD Card
+//            File sdCardDir = Environment.getExternalStorageDirectory();
+//            Log.i(TAG, "Sdcard dir: " + sdCardDir.getAbsolutePath());
+//
+//            KeyStore ks = KeyStore.getInstance(STORETYPE);
+//            File kf = new File(sdCardDir, KEYSTORE);
+//            ks.load(new FileInputStream(kf), STOREPASSWORD.toCharArray());
+//
+//            KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
+//            kmf.init(ks, KEYPASSWORD.toCharArray());
+//
+//            TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+//            tmf.init(ks);
+//
+//            SSLContext sslContext = SSLContext.getInstance("TLS");
+//            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+//
 
-            KeyStore ks = KeyStore.getInstance(STORETYPE);
-            File kf = new File(sdCardDir, KEYSTORE);
-            ks.load(new FileInputStream(kf), STOREPASSWORD.toCharArray());
 
-            BouncyCastleProvider provider = new BouncyCastleProvider();
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
-            kmf.init(ks, KEYPASSWORD.toCharArray());
-            tmf.init(ks);
+            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+
+            ks.load(getApplicationContext().getResources().openRawResource(R.raw.keystore), "storepass".toCharArray());
+            kmf.init(ks, "storepass".toCharArray());
+
+
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            KeyStore ts = KeyStore.getInstance(KeyStore.getDefaultType());
+            ts.load(getApplicationContext().getResources().openRawResource(R.raw.keystore), "storepass".toCharArray());
+            tmf.init(ts);
 
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+
+
             // sslContext.init( null, null, null ); // will use java's default key and trust store which is sufficient unless you deal with self-signed certificates
 
             chatclient.setSocket(sslContext.getSocketFactory().createSocket());
@@ -227,12 +212,14 @@ public class MainActivity extends AppCompatActivity {
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             while (true) {
-                String line = reader.readLine();
-                if (line.equals("close")) {
-                    chatclient.close();
-                } else {
-                    chatclient.send(line);
-                }
+//                String line = reader.readLine();
+//                if (line.equals("close")) {
+//                    chatclient.close();
+//                } else {
+//                    chatclient.send(line);
+//                }
+                Thread.sleep(1000);
+                chatclient.send("Hello world");
             }
         } catch (Exception e) {
             e.printStackTrace();

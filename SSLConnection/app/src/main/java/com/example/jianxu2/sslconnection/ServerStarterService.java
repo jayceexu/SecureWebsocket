@@ -103,27 +103,43 @@ public class ServerStarterService extends Service {
             try {
                 ChatServer chatserver = new ChatServer(PORT); // Firefox does allow multible ssl connection only via port 443 //tested on FF16
 
-                // load up the key store
-                String STORETYPE = "BKS";
-                String KEYSTORE = "keystore.bks";
-                String STOREPASSWORD = "123456";
-                String KEYPASSWORD = "123456";
-                File sdCardDir = Environment.getExternalStorageDirectory();
-                Log.i(TAG, "Sdcard dir: " + sdCardDir.getAbsolutePath());
+//                // load up the key store
+//                String STORETYPE = "BKS";
+//                String KEYSTORE = "keystore.bks";
+//                String STOREPASSWORD = "123456";
+//                String KEYPASSWORD = "123456";
+//                File sdCardDir = Environment.getExternalStorageDirectory();
+//                Log.i(TAG, "Sdcard dir: " + sdCardDir.getAbsolutePath());
+//
+//                KeyStore ks = KeyStore.getInstance(STORETYPE);
+//                KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
+//                TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+//
+//                File kf = new File(sdCardDir, KEYSTORE);
+//                ks.load(new FileInputStream(kf), STOREPASSWORD.toCharArray());
+//
+//                kmf.init(ks, KEYPASSWORD.toCharArray());
+//                tmf.init(ks);
+//
+//                SSLContext sslContext = SSLContext.getInstance("TLS");
+//                sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+//
 
-                KeyStore ks = KeyStore.getInstance(STORETYPE);
-                BouncyCastleProvider provider = new BouncyCastleProvider();
                 KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
-                TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+                KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
 
-                File kf = new File(sdCardDir, KEYSTORE);
-                ks.load(new FileInputStream(kf), STOREPASSWORD.toCharArray());
+                ks.load(getApplicationContext().getResources().openRawResource(R.raw.keystore), "storepass".toCharArray());
+                kmf.init(ks, "storepass".toCharArray());
 
-                kmf.init(ks, KEYPASSWORD.toCharArray());
-                tmf.init(ks);
+
+                TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                KeyStore ts = KeyStore.getInstance(KeyStore.getDefaultType());
+                ts.load(getApplicationContext().getResources().openRawResource(R.raw.keystore), "storepass".toCharArray());
+                tmf.init(ts);
 
                 SSLContext sslContext = SSLContext.getInstance("TLS");
                 sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+
 
                 chatserver.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
 

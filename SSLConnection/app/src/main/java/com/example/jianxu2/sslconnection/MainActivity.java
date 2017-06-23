@@ -164,50 +164,30 @@ public class MainActivity extends AppCompatActivity {
         try {
             WebSocketChatClient chatclient = new WebSocketChatClient(new URI("wss://localhost:8887"));
 
-//            // load up the key store
-//            String STORETYPE = "BKS";
-//            String KEYSTORE = "keystore.bks";
-//            String STOREPASSWORD = "123456";
-//            String KEYPASSWORD = "123456";
-//            // Get the dir of SD Card
-//            File sdCardDir = Environment.getExternalStorageDirectory();
-//            Log.i(TAG, "Sdcard dir: " + sdCardDir.getAbsolutePath());
-//
-//            KeyStore ks = KeyStore.getInstance(STORETYPE);
-//            File kf = new File(sdCardDir, KEYSTORE);
-//            ks.load(new FileInputStream(kf), STOREPASSWORD.toCharArray());
-//
-//            KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
-//            kmf.init(ks, KEYPASSWORD.toCharArray());
-//
-//            TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
-//            tmf.init(ks);
-//
-//            SSLContext sslContext = SSLContext.getInstance("TLS");
-//            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
-//
+            // load up the key store
+            String KEYSTORE = "keystore.bks";
+            String STOREPASSWORD = "storepass";
+            String KEYPASSWORD = "storepass";
+            // Get the dir of SD Card
+            File sdCardDir = Environment.getExternalStorageDirectory();
+            Log.i(TAG, "Sdcard dir: " + sdCardDir.getAbsolutePath());
 
+            KeyStore ks = KeyStore.getInstance("BKS");
+            File kf = new File(sdCardDir, KEYSTORE);
+//          ks.load(new FileInputStream(kf), STOREPASSWORD.toCharArray());
+            ks.load(getApplicationContext().getResources().openRawResource(R.raw.keystore), STOREPASSWORD.toCharArray());
 
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
-            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+            kmf.init(ks, KEYPASSWORD.toCharArray());
 
-            ks.load(getApplicationContext().getResources().openRawResource(R.raw.keystore), "storepass".toCharArray());
-            kmf.init(ks, "storepass".toCharArray());
-
-
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            KeyStore ts = KeyStore.getInstance(KeyStore.getDefaultType());
-            ts.load(getApplicationContext().getResources().openRawResource(R.raw.keystore), "storepass".toCharArray());
-            tmf.init(ts);
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+            tmf.init(ks);
 
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
 
-            // sslContext.init( null, null, null ); // will use java's default key and trust store which is sufficient unless you deal with self-signed certificates
-
             chatclient.setSocket(sslContext.getSocketFactory().createSocket());
-
             chatclient.connectBlocking();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));

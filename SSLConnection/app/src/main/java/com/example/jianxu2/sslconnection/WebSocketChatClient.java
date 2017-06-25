@@ -1,6 +1,8 @@
 package com.example.jianxu2.sslconnection;
 
+import android.app.Activity;
 import android.util.Log;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,8 +23,11 @@ class WebSocketChatClient extends WebSocketClient {
 
 	private static final String TAG = "WebSocketChatClient";
 
-	public WebSocketChatClient( URI serverUri ) {
-		super( serverUri );
+	private Activity mActivity;
+
+	public WebSocketChatClient(URI serverUri, Activity activity) {
+		super(serverUri);
+		mActivity = activity;
 	}
 
 	@Override
@@ -33,7 +38,15 @@ class WebSocketChatClient extends WebSocketClient {
 
 	@Override
 	public void onMessage( String message ) {
+		final String msg = message;
 		Log.i(TAG, "got: " + message );
+		mActivity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				TextView textView = (TextView)mActivity.findViewById(R.id.rcv_txt);
+				textView.setText(textView.getText() + "\n" + msg);
+			}
+		});
 	}
 
 	@Override

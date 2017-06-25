@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-
                 Log.i(TAG, "Connecting the websocket........");
                 try {
                     //WebSocket ws = connect();
@@ -153,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
         WebSocketImpl.DEBUG = true;
 
         try {
-            mWebSocketClient = new WebSocketChatClient(new URI("wss://localhost:8887"));
+            mWebSocketClient = new WebSocketChatClient(new URI("wss://localhost:8887"), this);
 
             // load up the key store
             String KEYSTORE = "keystore.bks";

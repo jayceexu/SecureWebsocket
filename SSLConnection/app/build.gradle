@@ -33,7 +33,7 @@ dependencies {
 
     provided files('libs/bcpg-jdk15on-157.jar')
     provided files('libs/bcpkix-jdk15on-157.jar')
-    provided files('libs/bcprov-jdk15on-157.jar')
+    provided files('libs/bcprov-ext-jdk15on-157.jar')
     provided files('libs/bctls-jdk15on-157.jar')
 
 //    compile 'com.madgag.spongycastle:core:1.56.0.0'

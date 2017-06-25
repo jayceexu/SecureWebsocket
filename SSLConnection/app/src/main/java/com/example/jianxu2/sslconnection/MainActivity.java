@@ -21,6 +21,7 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyStore;
@@ -43,8 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String SERVER = "ws://localhost";
     private static int TIMEOUT = 6000;
     Button mStartBtn;
-    EditText mServerText;
-    EditText mClientText;
     Button mSendBtn;
     Button mConnBtn;
     EditText mEditText;
@@ -59,6 +58,13 @@ public class MainActivity extends AppCompatActivity {
         mStartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(),
+                        Manifest.permission.READ_EXTERNAL_STORAGE);
+                if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
+                }
+
                 Log.i(TAG, "Starting server.......");
                 // Starting a background service to launch
                 Intent intent = new Intent(getApplicationContext(), ServerStarterService.class);
@@ -71,12 +77,7 @@ public class MainActivity extends AppCompatActivity {
         mConnBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(),
-                        Manifest.permission.READ_EXTERNAL_STORAGE);
-                if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(MainActivity.this,
-                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
-                }
+
 
                 Log.i(TAG, "Connecting the websocket........");
                 try {
@@ -99,9 +100,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "Sending message...........");
                 String msg = mEditText.getText().toString();
                 Log.i(TAG, "The message is " + msg);
-                //sendMessage();
-                //mWebSocketClient.send("Hello from " + Build.MANUFACTURER + " " + Build.MODEL);
-                //ws.sendText(msg);
                 sendMessage(mWebSocketClient);
             }
         });
@@ -161,13 +159,15 @@ public class MainActivity extends AppCompatActivity {
             String KEYSTORE = "keystore.bks";
             String STOREPASSWORD = "storepass";
             String KEYPASSWORD = "storepass";
+//            String STOREPASSWORD = "123456";
+//            String KEYPASSWORD = "123456";
             // Get the dir of SD Card
             File sdCardDir = Environment.getExternalStorageDirectory();
             Log.i(TAG, "Sdcard dir: " + sdCardDir.getAbsolutePath());
 
             KeyStore ks = KeyStore.getInstance("BKS");
             File kf = new File(sdCardDir, KEYSTORE);
-//          ks.load(new FileInputStream(kf), STOREPASSWORD.toCharArray());
+            //ks.load(new FileInputStream(kf), STOREPASSWORD.toCharArray());
             ks.load(getApplicationContext().getResources().openRawResource(R.raw.keystore), STOREPASSWORD.toCharArray());
 
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");

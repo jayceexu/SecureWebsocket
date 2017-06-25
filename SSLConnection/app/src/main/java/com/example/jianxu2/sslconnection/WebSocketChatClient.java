@@ -47,11 +47,6 @@ class WebSocketChatClient extends WebSocketClient {
 		ex.printStackTrace();
 
 	}
-	/*
-	 * Keystore with certificate created like so (in JKS format):
-	 *
-	 *keytool -genkey -validity 3650 -keystore "keystore.jks" -storepass "storepassword" -keypass "keypassword" -alias "default" -dname "CN=127.0.0.1, OU=MyOrgUnit, O=MyOrg, L=MyCity, S=MyRegion, C=MyCountry"
-	 */
 
 }
 
